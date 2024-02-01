@@ -12,7 +12,8 @@ import numpy as np
 import time
 from PIL import Image
  
-import tensorflow as tf 
+import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
 
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
 assert len(physical_devices) > 0, "Not enough GPU hardware devices available"
@@ -36,7 +37,7 @@ class DeepLabModel(object):
     for tar_info in tar_file.getmembers():
       if self.FROZEN_GRAPH_NAME in os.path.basename(tar_info.name):
         file_handle = tar_file.extractfile(tar_info)
-        graph_def = tf.GraphDef.FromString(file_handle.read())
+        graph_def = tf.compat.v1.GraphDef.FromString(file_handle.read())
         break
 
     tar_file.close()
@@ -47,7 +48,7 @@ class DeepLabModel(object):
     with self.graph.as_default():
       tf.import_graph_def(graph_def, name='')
 
-    self.sess = tf.Session(graph=self.graph)
+    self.sess = tf.compat.v1.Session(graph=self.graph)
 
   def run(self, image):
     """Runs inference on a single image.
@@ -72,12 +73,12 @@ class DeepLabModel(object):
 
     # all_names = [op.name for op in self.graph.get_operations()]
     # print (all_names)
-    sess = tf.Session() 
+    sess = tf.compat.v1.Session() 
     with sess.as_default():
         print()
         seg_map = batch_seg_map[:,:int(769*height/width),:769,:]
-        seg_map = tf.image.resize_bilinear(seg_map, (height,width), align_corners=True)
-        seg_map = tf.nn.softmax(seg_map)
+        seg_map = tf.compat.v1.image.resize_bilinear(seg_map, (height,width), align_corners=True)
+        seg_map = tf.compat.v1.nn.softmax(seg_map)
         seg_map = seg_map.eval()
     return resized_image, seg_map
 

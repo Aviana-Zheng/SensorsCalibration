@@ -5,6 +5,8 @@ This project is used to extract features of lane lines and pillars in the pictur
 It is recommended to use the conda environment, created by the following command:
 ```
 conda env create -f lidar2camera.yaml
+conda activate lidar2camera
+pip install tensorflow-gpu==2.4.0 -i https://mirrors.aliyun.com/pypi/simple/
 ```
 Pull the model by the following command: (pretrained network for semantic segmentation)
 ```
